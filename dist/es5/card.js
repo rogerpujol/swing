@@ -79,8 +79,8 @@ Card = function (stack, targetElement, springConfig) {
         config = Card.makeConfig(stack.getConfig());
         eventEmitter = (0, _sister2['default'])();
         springSystem = stack.getSpringSystem();
-        springThrowIn = springSystem.createSpring(configSpring.tenstionIn, configSpring.frinctionIn);
-        springThrowOut = springSystem.createSpring(configSpring.tenstionOut, configSpring.frinctionOut);
+        springThrowIn = springSystem.createSpring(configSpring.tensionIn, configSpring.frinctionIn);
+        springThrowOut = springSystem.createSpring(configSpring.tensionOut, configSpring.frinctionOut);
         lastThrow = {};
         lastTranslate = {
             x: 0,
