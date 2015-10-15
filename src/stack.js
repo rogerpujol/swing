@@ -61,18 +61,17 @@ Stack = (config) => {
         eventEmitter.off(eventName, listener);
     };
 
-
     /**
      * Creates an instance of Card and associates it with an element.
      *
      * @param {HTMLElement} element
      * @return {Card}
      */
-    stack.createCard = (element) => {
+    stack.createCard = (element,springConfig) => {
         let card,
             events;
 
-        card = Card(stack, element);
+        card = Card(stack, element, springConfig);
 
         events = [
             'throwout',
