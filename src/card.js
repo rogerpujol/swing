@@ -12,7 +12,7 @@ let Card;
  * @param {HTMLElement} targetElement
  * @return {Object} An instance of Card.
  */
-Card = (stack, targetElement) => {
+Card = (stack, targetElement, springConfig) => {
     let card,
         config,
         construct,
@@ -33,17 +33,17 @@ Card = (stack, targetElement) => {
         throwOutDistance,
         throwWhere;
 
-    construct = (_config) => {
-        config = _config || {};
+    construct = () => {
+        _config = springConfig || {};
         configSpring = {
-            tensionIn: config.tensionIn ? config.tensionIn : 250,
-            tensionOut: config.tensionOut ? config.tensionOut : 500,
-            frinctionIn: config.frinctionIn ? config.frinctionIn : 10,
-            frinctionOut: config.frinctionOut ? config.frinctionOut : 20,
-            inRestSpeedThreshold: config.inRestSpeedThreshold ? config.inRestSpeedThreshold : 0.05,
-            outRestSpeedThreshold: config.outRestSpeedThreshold ? config.outRestSpeedThreshold : 0.05,
-            inRestDisplacementThreshold: config.inRestDisplacementThreshold ? config.inRestDisplacementThreshold : 0.05,
-            outRestDisplacementThreshold: config.outRestDisplacementThreshold ? config.outRestDisplacementThreshold : 0.05
+            tensionIn: _config.tensionIn ? _config.tensionIn : 250,
+            tensionOut: _config.tensionOut ? _config.tensionOut : 500,
+            frinctionIn: _config.frinctionIn ? _config.frinctionIn : 10,
+            frinctionOut: _config.frinctionOut ? _config.frinctionOut : 20,
+            inRestSpeedThreshold: _config.inRestSpeedThreshold ? _config.inRestSpeedThreshold : 0.05,
+            outRestSpeedThreshold: _config.outRestSpeedThreshold ? _config.outRestSpeedThreshold : 0.05,
+            inRestDisplacementThreshold: _config.inRestDisplacementThreshold ? _config.inRestDisplacementThreshold : 0.05,
+            outRestDisplacementThreshold: _config.outRestDisplacementThreshold ? _config.outRestDisplacementThreshold : 0.05
         };
         card = {};
         config = Card.makeConfig(stack.getConfig());
