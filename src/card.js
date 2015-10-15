@@ -41,6 +41,7 @@ Card = (stack, targetElement, springConfig) => {
         cfg = springConfig || {};
 
         configSpring = {
+            throwOutVelocity: cfg.throwOutVelocity ? cfg.throwOutVelocity : 100,
             tensionIn: cfg.tensionIn ? cfg.tensionIn : 250,
             tensionOut: cfg.tensionOut ? cfg.tensionOut : 500,
             frinctionIn: cfg.frinctionIn ? cfg.frinctionIn : 10,
@@ -54,8 +55,8 @@ Card = (stack, targetElement, springConfig) => {
         config = Card.makeConfig(stack.getConfig());
         eventEmitter = Sister();
         springSystem = stack.getSpringSystem();
-        springThrowIn = springSystem.createSpring(configSpring.tenstionIn, configSpring.frinctionIn);
-        springThrowOut = springSystem.createSpring(configSpring.tenstionOut, configSpring.frinctionOut);
+        springThrowIn = springSystem.createSpring(configSpring.tensionIn, configSpring.frinctionIn);
+        springThrowOut = springSystem.createSpring(configSpring.tensionOut, configSpring.frinctionOut);
         lastThrow = {};
         lastTranslate = {
             x: 0,
@@ -63,10 +64,10 @@ Card = (stack, targetElement, springConfig) => {
         };
 
         springThrowIn.setRestSpeedThreshold(configSpring.inRestDisplacementThreshold);
-        springThrowIn.setRestDisplacementThreshold(configSpring.inRestDisplacementThreshold);
+        springThrowIn.setRestDisplacementThreshold(configSpring.outRestDisplacementThreshold);
 
-        springThrowOut.setRestSpeedThreshold(configSpring.outRestDisplacementThreshold);
-        springThrowOut.setRestDisplacementThreshold(configSpring.outRestDisplacementThreshold);
+        springThrowOut.setRestSpeedThreshold(configSpring.inRestSpeedThreshold);
+        springThrowOut.setRestDisplacementThreshold(configSpring.outRestSpeedThreshold);
 
         throwOutDistance = config.throwOutDistance(config.minThrowOutDistance, config.maxThrowOutDistance);
 
@@ -274,7 +275,7 @@ Card = (stack, targetElement, springConfig) => {
                     throwDirection: lastThrow.direction
                 });
             } else if (where === Card.THROW_OUT) {
-                springThrowOut.setCurrentValue(0).setAtRest().setVelocity(100).setEndValue(1);
+                springThrowOut.setCurrentValue(0).setAtRest().setVelocity(configSpring.throwOutVelocity).setEndValue(1);
 
                 eventEmitter.trigger('throwout', {
                     target: targetElement,
