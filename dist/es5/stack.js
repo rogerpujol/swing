@@ -74,16 +74,28 @@ Stack = function (config) {
     };
 
     /**
+     * Proxy to the instance of the event emitter.
+     *
+     * @param {String} eventName
+     * @param {String} listener
+     * @return {undefined}
+     */
+    stack.off = function (eventName, listener) {
+        eventEmitter.off(eventName, listener);
+    };
+
+    /**
      * Creates an instance of Card and associates it with an element.
      *
      * @param {HTMLElement} element
+     * @param {Object} springConfig
      * @return {Card}
      */
-    stack.createCard = function (element) {
+    stack.createCard = function (element, springConfig) {
         var card = undefined,
             events = undefined;
 
-        card = (0, _card2['default'])(stack, element);
+        card = (0, _card2['default'])(stack, element, springConfig);
 
         events = ['throwout', 'throwoutend', 'throwoutleft', 'throwoutright', 'throwin', 'throwinend', 'dragstart', 'dragmove', 'dragend'];
 

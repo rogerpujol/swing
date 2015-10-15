@@ -65,9 +65,10 @@ Stack = (config) => {
      * Creates an instance of Card and associates it with an element.
      *
      * @param {HTMLElement} element
+     * @param {Object} springConfig
      * @return {Card}
      */
-    stack.createCard = (element,springConfig) => {
+    stack.createCard = (element, springConfig) => {
         let card,
             events;
 
