@@ -197,7 +197,7 @@ Card = (stack, targetElement, springConfig) => {
 
                 value = spring.getCurrentValue();
                 x = rebound.MathUtil.mapValueInRange(value, 0, 1, lastThrow.fromX, throwOutDistance * lastThrow.direction);
-                y = lastThrow.fromY;
+                y = rebound.MathUtil.mapValueInRange(value, 0, 1, lastThrow.fromY,  lastThrow.fromY*4);
 
                 onSpringUpdate(x, y);
             },
