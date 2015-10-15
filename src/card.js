@@ -33,24 +33,35 @@ Card = (stack, targetElement) => {
         throwOutDistance,
         throwWhere;
 
-    construct = () => {
+    construct = (_config) => {
+        config = _config || {};
+        configSpring = {
+            tensionIn: config.tensionIn ? config.tensionIn : 250,
+            tensionOut: config.tensionOut ? config.tensionOut : 500,
+            frinctionIn: config.frinctionIn ? config.frinctionIn : 10,
+            frinctionOut: config.frinctionOut ? config.frinctionOut : 20,
+            inRestSpeedThreshold: config.inRestSpeedThreshold ? config.inRestSpeedThreshold : 0.05,
+            outRestSpeedThreshold: config.outRestSpeedThreshold ? config.outRestSpeedThreshold : 0.05,
+            inRestDisplacementThreshold: config.inRestDisplacementThreshold ? config.inRestDisplacementThreshold : 0.05,
+            outRestDisplacementThreshold: config.outRestDisplacementThreshold ? config.outRestDisplacementThreshold : 0.05
+        };
         card = {};
         config = Card.makeConfig(stack.getConfig());
         eventEmitter = Sister();
         springSystem = stack.getSpringSystem();
-        springThrowIn = springSystem.createSpring(250, 10);
-        springThrowOut = springSystem.createSpring(500, 20);
+        springThrowIn = springSystem.createSpring(configSpring.tenstionIn, configSpring.frinctionIn);
+        springThrowOut = springSystem.createSpring(configSpring.tenstionOut, configSpring.frinctionOut);
         lastThrow = {};
         lastTranslate = {
             x: 0,
             y: 0
         };
 
-        springThrowIn.setRestSpeedThreshold(0.05);
-        springThrowIn.setRestDisplacementThreshold(0.05);
+        springThrowIn.setRestSpeedThreshold(configSpring.inRestDisplacementThreshold);
+        springThrowIn.setRestDisplacementThreshold(configSpring.inRestDisplacementThreshold);
 
-        springThrowOut.setRestSpeedThreshold(0.05);
-        springThrowOut.setRestDisplacementThreshold(0.05);
+        springThrowOut.setRestSpeedThreshold(configSpring.outRestDisplacementThreshold);
+        springThrowOut.setRestDisplacementThreshold(configSpring.outRestDisplacementThreshold);
 
         throwOutDistance = config.throwOutDistance(config.minThrowOutDistance, config.maxThrowOutDistance);
 
