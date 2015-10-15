@@ -51,6 +51,18 @@ Stack = (config) => {
     };
 
     /**
+     * Proxy to the instance of the event emitter.
+     *
+     * @param {String} eventName
+     * @param {String} listener
+     * @return {undefined}
+     */
+    stack.off = (eventName, listener) => {
+        eventEmitter.off(eventName, listener);
+    };
+
+
+    /**
      * Creates an instance of Card and associates it with an element.
      *
      * @param {HTMLElement} element
