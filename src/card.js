@@ -33,7 +33,8 @@ Card = (stack, targetElement, springConfig) => {
         springThrowIn,
         springThrowOut,
         throwOutDistance,
-        throwWhere;
+        throwWhere,
+        panStarted;
 
     construct = () => {
         let cfg;
@@ -51,6 +52,9 @@ Card = (stack, targetElement, springConfig) => {
             inRestDisplacementThreshold: cfg.inRestDisplacementThreshold ? cfg.inRestDisplacementThreshold : 0.05,
             outRestDisplacementThreshold: cfg.outRestDisplacementThreshold ? cfg.outRestDisplacementThreshold : 0.05
         };
+        
+        panStarted = false;
+
         card = {};
         config = Card.makeConfig(stack.getConfig());
         eventEmitter = Sister();
@@ -71,16 +75,7 @@ Card = (stack, targetElement, springConfig) => {
 
         throwOutDistance = config.throwOutDistance(config.minThrowOutDistance, config.maxThrowOutDistance);
 
-        mc = new Hammer.Manager(targetElement, {
-            recognizers: [
-                [
-                    Hammer.Pan,
-                    {
-                        threshold: 2
-                    }
-                ]
-            ]
-        });
+        mc = new Hammer(targetElement);
 
         Card.appendToParent(targetElement);
 
@@ -133,13 +128,15 @@ Card = (stack, targetElement, springConfig) => {
         // "mousedown" event fires late on touch enabled devices, thus listening
         // to the touchstart event for touch enabled devices and mousedown otherwise.
         if (util.isTouchDevice()) {
-            targetElement.addEventListener('touchstart', () => {
+
+            //## UNCOMMENT FOR REGULAT BEHAVIOR ( COMMENTED TO ENABLE VERTICAL SCROLL)
+            /*targetElement.addEventListener('touchstart', () => {
                 eventEmitter.trigger('panstart');
-            });
+            });*/
 
             // Disable scrolling while dragging the element on the touch enabled devices.
             // @see http://stackoverflow.com/a/12090055/368691
-            (() => {
+            /*(() => {
                 let dragging;
 
                 targetElement.addEventListener('touchstart', () => {
@@ -155,19 +152,34 @@ Card = (stack, targetElement, springConfig) => {
                         e.preventDefault();
                     }
                 });
-            })();
+            })();*/
         } else {
-            targetElement.addEventListener('mousedown', () => {
+            /*targetElement.addEventListener('mousedown', () => {
                 eventEmitter.trigger('panstart');
-            });
+            });*/
         }
 
         mc.on('panmove', (e) => {
-            eventEmitter.trigger('panmove', e);
+            if(!panStarted){
+                if(Math.abs(e.angle) < 45 && Math.abs(e.angle) >= 0 ||  (Math.abs(e.angle) > 145 && Math.abs(e.angle)< 225)  ){
+                    console.log("pan move: ",Math.abs(e.angle));
+                    eventEmitter.trigger('panstart', e);
+                    panStarted = true;
+                }else{
+                    e.preventDefault();
+                    e.srcEvent.preventDefault();
+                }
+            }else{
+                console.log("pan move: ",e.deltaY);
+                eventEmitter.trigger('panmove', e);
+            }
         });
 
         mc.on('panend', (e) => {
-            eventEmitter.trigger('panend', e);
+            if(panStarted){
+                eventEmitter.trigger('panend', e);
+                panStarted = false;
+            }
         });
 
         springThrowIn.addListener({
