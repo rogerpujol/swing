@@ -54,6 +54,7 @@ Card = function (stack, targetElement, springConfig) {
         lastY = undefined,
         mc = undefined,
         _onSpringUpdate = undefined,
+        panStarted = undefined,
         springSystem = undefined,
         springThrowIn = undefined,
         springThrowOut = undefined,
@@ -76,6 +77,9 @@ Card = function (stack, targetElement, springConfig) {
             inRestDisplacementThreshold: cfg.inRestDisplacementThreshold ? cfg.inRestDisplacementThreshold : 0.05,
             outRestDisplacementThreshold: cfg.outRestDisplacementThreshold ? cfg.outRestDisplacementThreshold : 0.05
         };
+
+        panStarted = false;
+
         card = {};
         config = Card.makeConfig(stack.getConfig());
         eventEmitter = (0, _sister2['default'])();
@@ -96,11 +100,7 @@ Card = function (stack, targetElement, springConfig) {
 
         throwOutDistance = config.throwOutDistance(config.minThrowOutDistance, config.maxThrowOutDistance);
 
-        mc = new _hammerjs2['default'].Manager(targetElement, {
-            recognizers: [[_hammerjs2['default'].Pan, {
-                threshold: 2
-            }]]
-        });
+        mc = new _hammerjs2['default'](targetElement);
 
         Card.appendToParent(targetElement);
 
@@ -153,41 +153,62 @@ Card = function (stack, targetElement, springConfig) {
         // "mousedown" event fires late on touch enabled devices, thus listening
         // to the touchstart event for touch enabled devices and mousedown otherwise.
         if (_utilJs2['default'].isTouchDevice()) {
-            targetElement.addEventListener('touchstart', function () {
-                eventEmitter.trigger('panstart');
-            });
+
+            // ## UNCOMMENT FOR REGULAT BEHAVIOR ( COMMENTED TO ENABLE VERTICAL SCROLL)
+            /*
+                targetElement.addEventListener('touchstart', () => {
+                    eventEmitter.trigger('panstart');
+                });
+            */
 
             // Disable scrolling while dragging the element on the touch enabled devices.
             // @see http://stackoverflow.com/a/12090055/368691
-            (function () {
-                var dragging = undefined;
+            /*
+                (() => {
+                    let dragging;
+                     targetElement.addEventListener('touchstart', () => {
+                        dragging = true;
+                    });
+                     targetElement.addEventListener('touchend', () => {
+                        dragging = false;
+                    });
+                     global.addEventListener('touchmove', (e) => {
+                        if (dragging) {
+                            e.preventDefault();
+                        }
+                    });
+                })();
+            */
 
-                targetElement.addEventListener('touchstart', function () {
-                    dragging = true;
-                });
-
-                targetElement.addEventListener('touchend', function () {
-                    dragging = false;
-                });
-
-                global.addEventListener('touchmove', function (e) {
-                    if (dragging) {
-                        e.preventDefault();
-                    }
-                });
-            })();
         } else {
-            targetElement.addEventListener('mousedown', function () {
-                eventEmitter.trigger('panstart');
-            });
-        }
+
+                /*
+                    targetElement.addEventListener('mousedown', () => {
+                        eventEmitter.trigger('panstart');
+                    });
+                */
+
+            }
 
         mc.on('panmove', function (e) {
-            eventEmitter.trigger('panmove', e);
+            if (!panStarted) {
+                if (Math.abs(e.angle) < 45 && Math.abs(e.angle) >= 0 || Math.abs(e.angle) > 145 && Math.abs(e.angle) < 225) {
+                    eventEmitter.trigger('panstart', e);
+                    panStarted = true;
+                } else {
+                    e.preventDefault();
+                    e.srcEvent.preventDefault();
+                }
+            } else {
+                eventEmitter.trigger('panmove', e);
+            }
         });
 
         mc.on('panend', function (e) {
-            eventEmitter.trigger('panend', e);
+            if (panStarted) {
+                eventEmitter.trigger('panend', e);
+                panStarted = false;
+            }
         });
 
         springThrowIn.addListener({

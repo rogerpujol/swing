@@ -29,12 +29,12 @@ Card = (stack, targetElement, springConfig) => {
         lastY,
         mc,
         onSpringUpdate,
+        panStarted,
         springSystem,
         springThrowIn,
         springThrowOut,
         throwOutDistance,
-        throwWhere,
-        panStarted;
+        throwWhere;
 
     construct = () => {
         let cfg;
@@ -52,7 +52,7 @@ Card = (stack, targetElement, springConfig) => {
             inRestDisplacementThreshold: cfg.inRestDisplacementThreshold ? cfg.inRestDisplacementThreshold : 0.05,
             outRestDisplacementThreshold: cfg.outRestDisplacementThreshold ? cfg.outRestDisplacementThreshold : 0.05
         };
-        
+
         panStarted = false;
 
         card = {};
@@ -129,54 +129,61 @@ Card = (stack, targetElement, springConfig) => {
         // to the touchstart event for touch enabled devices and mousedown otherwise.
         if (util.isTouchDevice()) {
 
-            //## UNCOMMENT FOR REGULAT BEHAVIOR ( COMMENTED TO ENABLE VERTICAL SCROLL)
-            /*targetElement.addEventListener('touchstart', () => {
-                eventEmitter.trigger('panstart');
-            });*/
+            // ## UNCOMMENT FOR REGULAT BEHAVIOR ( COMMENTED TO ENABLE VERTICAL SCROLL)
+            /*
+                targetElement.addEventListener('touchstart', () => {
+                    eventEmitter.trigger('panstart');
+                });
+            */
 
             // Disable scrolling while dragging the element on the touch enabled devices.
             // @see http://stackoverflow.com/a/12090055/368691
-            /*(() => {
-                let dragging;
+            /*
+                (() => {
+                    let dragging;
 
-                targetElement.addEventListener('touchstart', () => {
-                    dragging = true;
-                });
+                    targetElement.addEventListener('touchstart', () => {
+                        dragging = true;
+                    });
 
-                targetElement.addEventListener('touchend', () => {
-                    dragging = false;
-                });
+                    targetElement.addEventListener('touchend', () => {
+                        dragging = false;
+                    });
 
-                global.addEventListener('touchmove', (e) => {
-                    if (dragging) {
-                        e.preventDefault();
-                    }
-                });
-            })();*/
+                    global.addEventListener('touchmove', (e) => {
+                        if (dragging) {
+                            e.preventDefault();
+                        }
+                    });
+                })();
+            */
+
         } else {
-            /*targetElement.addEventListener('mousedown', () => {
-                eventEmitter.trigger('panstart');
-            });*/
+
+            /*
+                targetElement.addEventListener('mousedown', () => {
+                    eventEmitter.trigger('panstart');
+                });
+            */
+
         }
 
         mc.on('panmove', (e) => {
-            if(!panStarted){
-                if(Math.abs(e.angle) < 45 && Math.abs(e.angle) >= 0 ||  (Math.abs(e.angle) > 145 && Math.abs(e.angle)< 225)  ){
-                    console.log("pan move: ",Math.abs(e.angle));
+            if (!panStarted) {
+                if (Math.abs(e.angle) < 45 && Math.abs(e.angle) >= 0 || Math.abs(e.angle) > 145 && Math.abs(e.angle) < 225) {
                     eventEmitter.trigger('panstart', e);
                     panStarted = true;
-                }else{
+                } else {
                     e.preventDefault();
                     e.srcEvent.preventDefault();
                 }
-            }else{
-                console.log("pan move: ",e.deltaY);
+            } else {
                 eventEmitter.trigger('panmove', e);
             }
         });
 
         mc.on('panend', (e) => {
-            if(panStarted){
+            if (panStarted) {
                 eventEmitter.trigger('panend', e);
                 panStarted = false;
             }
